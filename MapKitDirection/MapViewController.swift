@@ -96,6 +96,8 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             
             let route = routeResponse.routes[0]
             self.mapView.add(route.polyline, level: MKOverlayLevel.aboveRoads)
+            let rect = route.polyline.boundingMapRect
+            self.mapView.setRegion(MKCoordinateRegionForMapRect(rect), animated: true)
         }
         
     }
@@ -130,6 +132,20 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         }
         
         return annotationView
+    }
+    
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+        
+        let render = MKPolylineRenderer(overlay: overlay)
+        render.strokeColor = .blue
+        render.lineWidth = 3.0
+        
+        return render
+        
+    }
+    
+    deinit {
+        print("Deinit Map")
     }
     
 }
