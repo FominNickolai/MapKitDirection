@@ -21,6 +21,8 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     var currentPlacemark: CLPlacemark?
     
     var currentTransportType = MKDirectionsTransportType.automobile
+    
+    var currentRoute: MKRoute?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -113,6 +115,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             }
             
             let route = routeResponse.routes[0]
+            self.currentRoute = route
             self.mapView.removeOverlays(self.mapView.overlays)
             self.mapView.add(route.polyline, level: MKOverlayLevel.aboveRoads)
             let rect = route.polyline.boundingMapRect
@@ -150,6 +153,8 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             annotationView?.pinTintColor = UIColor.orange
         }
         
+        annotationView?.rightCalloutAccessoryView = UIButton(type: UIButtonType.detailDisclosure)
+        
         return annotationView
     }
     
@@ -163,8 +168,36 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         
     }
     
+    //MARK: Segues
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        //Get the new view controller using
+        if segue.identifier == "showSteps" {
+            let routeTableViewController = segue.destination.childViewControllers[0] as! RouteTableViewController
+            if let steps = currentRoute?.steps {
+                routeTableViewController.routeSteps = steps
+            }
+        }
+    }
+    
+    
+    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+        
+        performSegue(withIdentifier: "showSteps", sender: view)
+        
+    }
+    
+    //MARK: - Deinit
     deinit {
         print("Deinit Map")
     }
     
 }
+
+
+
+
+
+
+
+
+
