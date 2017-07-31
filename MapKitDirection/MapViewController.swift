@@ -14,9 +14,21 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     @IBOutlet var mapView: MKMapView!
     
     var restaurant:Restaurant!
+    
+    let locationManager = CLLocationManager()
+    
+    var currentPlacemark: CLPlacemark?
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //Request for a user's authorization for location services
+        locationManager.requestWhenInUseAuthorization()
+        let status = CLLocationManager.authorizationStatus()
+        
+        if status == CLAuthorizationStatus.authorizedWhenInUse {
+            mapView.showsUserLocation = true
+        }
 
         // Convert address to coordinate and annotate it on map
         let geoCoder = CLGeocoder()
@@ -29,6 +41,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             if let placemarks = placemarks {
                 // Get the first placemark
                 let placemark = placemarks[0]
+                self.currentPlacemark = placemark
                 
                 // Add annotation
                 let annotation = MKPointAnnotation()
@@ -58,6 +71,37 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    //MARK: - Actions
+    
+    @IBAction func showDirection(sender: UIButton) {
+        guard let currentPlacemark = currentPlacemark else { return }
+        
+        let directionRequest = MKDirectionsRequest()
+        //Set the source and destination of the route
+        directionRequest.source = MKMapItem.forCurrentLocation()
+        let destinationPlacemark = MKPlacemark(placemark: currentPlacemark)
+        directionRequest.destination = MKMapItem(placemark: destinationPlacemark)
+        directionRequest.transportType = MKDirectionsTransportType.automobile
+        
+        //Calculate the direction
+        let direction = MKDirections(request: directionRequest)
+        direction.calculate { (routeResponse, routeError) in
+            guard let routeResponse = routeResponse else {
+                if let routeError = routeError {
+                    print("Error: \(routeError)")
+                }
+                return
+            }
+            
+            let route = routeResponse.routes[0]
+            self.mapView.add(route.polyline, level: MKOverlayLevel.aboveRoads)
+        }
+        
+    }
+    
+    //MARK: - Methods
+    
     
     // MARK: - MKMapViewDelegate methods
     
