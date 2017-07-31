@@ -95,12 +95,21 @@
                                     <action selector="showDirectionWithSender:" destination="vIg-fp-xRT" eventType="touchUpInside" id="2B1-Sc-y7R"/>
                                 </connections>
                             </button>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="068-Ks-bqZ">
+                                <rect key="frame" x="238" y="619" width="121" height="29"/>
+                                <segments>
+                                    <segment title="First"/>
+                                    <segment title="Second"/>
+                                </segments>
+                            </segmentedControl>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="Tpj-yl-bg6" firstAttribute="top" secondItem="Goi-EB-4Np" secondAttribute="bottom" id="7Jv-pw-zJL"/>
+                            <constraint firstItem="8HF-jw-9YF" firstAttribute="top" secondItem="068-Ks-bqZ" secondAttribute="bottom" constant="20" id="ELA-QD-ig2"/>
                             <constraint firstItem="jEj-5k-AC1" firstAttribute="trailing" secondItem="Ial-l8-Ek4" secondAttribute="trailingMargin" id="Qzf-FC-f5I"/>
                             <constraint firstItem="Ghd-IX-lkO" firstAttribute="leading" secondItem="Ial-l8-Ek4" secondAttribute="leading" id="cvS-nV-Rnw"/>
+                            <constraint firstItem="068-Ks-bqZ" firstAttribute="trailing" secondItem="Ial-l8-Ek4" secondAttribute="trailingMargin" id="ePj-n0-1dE"/>
                             <constraint firstItem="8HF-jw-9YF" firstAttribute="top" secondItem="Ghd-IX-lkO" secondAttribute="bottom" id="ghl-Lq-MjE"/>
                             <constraint firstItem="Ghd-IX-lkO" firstAttribute="top" secondItem="Ial-l8-Ek4" secondAttribute="top" id="nLY-ll-zkG"/>
                             <constraint firstAttribute="trailing" secondItem="Ghd-IX-lkO" secondAttribute="trailing" id="vbH-Dk-3az"/>
@@ -110,6 +119,7 @@
                     </view>
                     <connections>
                         <outlet property="mapView" destination="Ghd-IX-lkO" id="7rD-gZ-zT6"/>
+                        <outlet property="segmentedControl" destination="068-Ks-bqZ" id="Tqz-Mu-lMu"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kCR-Rp-M6q" userLabel="First Responder" sceneMemberID="firstResponder"/>

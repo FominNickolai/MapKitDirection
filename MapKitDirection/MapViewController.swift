@@ -12,15 +12,21 @@ import MapKit
 class MapViewController: UIViewController, MKMapViewDelegate {
 
     @IBOutlet var mapView: MKMapView!
+    @IBOutlet weak var segmentedControl: UISegmentedControl!
     
     var restaurant:Restaurant!
     
     let locationManager = CLLocationManager()
     
     var currentPlacemark: CLPlacemark?
+    
+    var currentTransportType = MKDirectionsTransportType.automobile
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        segmentedControl.isHidden = true
+        segmentedControl.addTarget(self, action: #selector(showDirection), for: .valueChanged)
         
         //Request for a user's authorization for location services
         locationManager.requestWhenInUseAuthorization()
@@ -75,6 +81,18 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     //MARK: - Actions
     
     @IBAction func showDirection(sender: UIButton) {
+        
+        switch segmentedControl.selectedSegmentIndex {
+        case 0:
+            currentTransportType = .automobile
+        case 1:
+            currentTransportType = .walking
+        default:
+            break
+        }
+        
+        segmentedControl.isHidden = false
+        
         guard let currentPlacemark = currentPlacemark else { return }
         
         let directionRequest = MKDirectionsRequest()
@@ -82,7 +100,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         directionRequest.source = MKMapItem.forCurrentLocation()
         let destinationPlacemark = MKPlacemark(placemark: currentPlacemark)
         directionRequest.destination = MKMapItem(placemark: destinationPlacemark)
-        directionRequest.transportType = MKDirectionsTransportType.automobile
+        directionRequest.transportType = currentTransportType
         
         //Calculate the direction
         let direction = MKDirections(request: directionRequest)
@@ -95,6 +113,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             }
             
             let route = routeResponse.routes[0]
+            self.mapView.removeOverlays(self.mapView.overlays)
             self.mapView.add(route.polyline, level: MKOverlayLevel.aboveRoads)
             let rect = route.polyline.boundingMapRect
             self.mapView.setRegion(MKCoordinateRegionForMapRect(rect), animated: true)
@@ -137,7 +156,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         
         let render = MKPolylineRenderer(overlay: overlay)
-        render.strokeColor = .blue
+        render.strokeColor = currentTransportType == .automobile ? .blue : .orange
         render.lineWidth = 3.0
         
         return render
